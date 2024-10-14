@@ -5,21 +5,26 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Here you would typically send the form data to a server
-            // For this example, we'll just log it to the console
-            console.log('Form submitted!');
-            
-            // Get form data
-            const formData = new FormData(form);
-            for (let [key, value] of formData.entries()) {
-                console.log(key + ': ' + value);
-            }
-            
-            // Clear the form
-            form.reset();
-            
-            // Show a success message (you can replace this with a more user-friendly notification)
-            alert('Thank you for your message! I\'ll get back to you soon.');
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    alert('Thank you for your message! I\'ll get back to you soon.');
+                    form.reset();
+                } else {
+                    throw new Error('Form submission failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('There was an error sending your message. Please try again.');
+            });
         });
     }
 
@@ -81,6 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    var aboutLink = document.querySelector('a[href="#about"]');
     var aboutMessage = document.getElementById('about-message');
     var closeBtn = document.getElementById('close-about');
 
